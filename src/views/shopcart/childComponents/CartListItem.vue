@@ -12,7 +12,14 @@
         <div class="item-desc">{{itemInfo.desc}}</div>
         <div class="info-bottom">
           <span class="price">￥{{itemInfo.realPrice}}</span>
-          <span class="count">x{{itemInfo.count}}</span>
+          <span>
+            <span class="count" v-show="isFixedCount" @click="countClick">x{{itemInfo.count}}</span>
+            <span class="count" v-show="!isFixedCount">
+              <button class="count-btn-left" @click="countDecrease">-</button>
+              <span class="count-btn-text">{{itemInfo.count}}</span>
+              <button class="count-btn-right" @click="countIncrease">+</button>
+            </span>
+          </span>
         </div>
       </div>
     </div>
@@ -22,8 +29,16 @@
 <script>
   import CheckButton from "components/content/checkBtn/CheckButton.vue";
 
+  import { ADD_COUNT, SUB_COUNT } from '@/store/mutation_types';
+
   export default {
     name: "CartListItem",
+    components: {
+      CheckButton
+    },
+    activated() {
+      this.isFixedCount = true
+    },
     props: {
       itemInfo: {
         type: Object,
@@ -32,13 +47,27 @@
         }
       }
     },
-    components: {
-      CheckButton
+    data() {
+      return {
+        isFixedCount: true
+      }
     },
     methods: {
       // 监听商品选中按钮点击
       tickClick() {
         this.itemInfo.checked = !this.itemInfo.checked
+      },
+      // 监听商品数量点击
+      countClick() {
+        this.isFixedCount = !this.isFixedCount
+      },
+      // 商品数量减一
+      countDecrease() {
+        this.$store.commit(SUB_COUNT, this.itemInfo)
+      },
+      // 商品数量加一
+      countIncrease() {
+        this.$store.commit(ADD_COUNT, this.itemInfo)
       }
     }
   }
@@ -91,11 +120,30 @@
     margin-top: 20px;
   }
   .price {
+    padding: 2px 0;
     color: var(--color-high-text);
+    font-size: 18px;
   }
   .count {
     position: absolute;
     right: 3px;
     bottom: 0;
+  }
+  .count-btn-left {
+    padding: 2px 8px;
+    background-color: #f6f6f6;
+    border: #e6e6e6 1px solid;
+    border-radius: 25% 0 0 25%;
+  }
+  .count-btn-right {
+    padding: 2px 7px;
+    background-color: #f6f6f6;
+    border: #e6e6e6 1px solid;
+    border-radius: 0 25% 25% 0;
+  }
+  .count-btn-text {
+    padding: 2px 10px;
+    border-top: #e6e6e6 1px solid;
+    border-bottom: #e6e6e6 1px solid;
   }
 </style>

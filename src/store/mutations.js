@@ -1,7 +1,8 @@
 import {
   ADD_COUNT,
   ADD_NEW_PRODUCT,
-  CHANGE_CHECKED_ATTR
+  CHANGE_CHECKED_ATTR,
+  SUB_COUNT
 } from './mutation_types';
 
 export default {
@@ -16,5 +17,12 @@ export default {
   // 修改checked属性值
   [CHANGE_CHECKED_ATTR](state, payload) {
     state.goodsInCart.forEach(item => item.checked = payload)
+  },
+
+  // 商品数量减一
+  [SUB_COUNT](state, payload) {
+    if (payload.count > 1) {
+      payload.count--
+    }
   }
 }
